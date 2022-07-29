@@ -17,7 +17,7 @@ class BoulderingPlaces extends StatelessWidget {
             margin: const EdgeInsets.only(left: 10.0, top: 5, right: 10),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50), // NEW
+                minimumSize: const Size.fromHeight(50),
               ),
               onPressed: () => {
                 Navigator.push(
