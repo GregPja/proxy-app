@@ -6,7 +6,7 @@ import 'package:proxyfoxyapp/profile/profileForm.dart';
 
 class ProfileService {
   UserProfile? _currentProfile;
-  static final ProfileService _instance = ProfileService._internal();
+  static final ProfileService _instance = ProfileService._internal(); //TODO find a wayyyy better way for this
 
   factory ProfileService() {
     return _instance;

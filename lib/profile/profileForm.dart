@@ -117,7 +117,7 @@ class ProfileState extends State<ProfileForm> {
                   );
                 }
               },
-              child: const Text('Submit'),
+              child: const Text('Update Profile'),
             ),
           ),
         ]));
