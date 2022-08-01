@@ -23,37 +23,21 @@ class SlotsView extends StatelessWidget {
           title: Text("$gymName - ${DateFormat("E dd MMM").format(choseDate)}"),
         ),
         body: ListView(
-          children: slots.map((e) {
+          children: slots.map((slot) {
             final formatter = DateFormat("HH:mm");
-            final start = formatter.format(e.start.toLocal());
-            final end = formatter.format(e.end.toLocal());
+            final start = formatter.format(slot.start.toLocal());
+            final end = formatter.format(slot.end.toLocal());
             return ElevatedButton(
                 onPressed: () async {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => ReviewBooking(
-                              gymName: gymName,
-                              from: e.start.toLocal(),
-                              to: e.end.toLocal(),
+                                gymName: gymName,
+                                slot: slot,
                               )));
                 },
-                //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                //       backgroundColor: Color.fromARGB(200, 26, 255, 0),
-                //       duration: Duration(minutes: 1),
-                //       content: Row(
-                //         children: <Widget>[
-                //           CircularProgressIndicator(),
-                //           Text("  Booking...")
-                //         ],
-                //       )));
-                //   Future.delayed(Duration(seconds: 5), () {})
-                //       .whenComplete(() =>
-                //           ScaffoldMessenger.of(context).removeCurrentSnackBar())
-                //       .then((value) => Navigator.of(context)
-                //           .popUntil((route) => route.isFirst));
-                // },
-                child: Text("$start - $end | ${e.freeSpots} "));
+                child: Text("$start - $end | ${slot.freeSpots} "));
           }).toList(),
         ));
   }

@@ -41,49 +41,55 @@ class ProfileState extends State<ProfileForm> {
               label: "First name",
               value: userDetail.firstName,
               updateFunction: (value) {
-                setState(() => userDetail.firstName = value);
+                setState(() => userDetail.firstName = value?.trim());
               }),
           _InputForm(
               label: "Last name",
               value: userDetail.lastName,
               updateFunction: (value) {
-                setState(() => userDetail.lastName = value);
+                setState(() => userDetail.lastName = value?.trim());
               }),
           _InputForm(
               label: "Email",
               value: userDetail.email,
               updateFunction: (value) {
-                setState(() => userDetail.email = value);
+                setState(() => userDetail.email = value?.trim());
               }),
           _InputForm(
               label: "Urban sport club ID",
               value: userDetail.urbanSportClubId,
               updateFunction: (value) {
-                setState(() => userDetail.urbanSportClubId = value);
+                setState(() => userDetail.urbanSportClubId = value?.trim());
               }),
           _InputForm(
               label: "Date of birth (dd.mm.yyyy)",
               value: userDetail.dateOfBirth,
               updateFunction: (value) {
-                setState(() => userDetail.dateOfBirth = value);
+                setState(() => userDetail.dateOfBirth = value?.trim());
+              },
+              validation: (value) {
+                final re = RegExp(r'\d{2}.\d{2}.\d{4}'); // yeah yeah, I should check if it's a Date time, it will come
+                return re.stringMatch(value) == value
+                    ? null
+                    : "Birthday does not match the format, example: 14.02.1990";
               }),
           _InputForm(
               label: "Street name",
               value: userDetail.streetName,
               updateFunction: (value) {
-                setState(() => userDetail.streetName = value);
+                setState(() => userDetail.streetName = value?.trim());
               }),
           _InputForm(
               label: "City",
               value: userDetail.city,
               updateFunction: (value) {
-                setState(() => userDetail.city = value);
+                setState(() => userDetail.city = value?.trim());
               }),
           _InputForm(
             label: "Phone number",
             value: userDetail.phoneNumber,
             updateFunction: (value) {
-              setState(() => userDetail.phoneNumber = value);
+              setState(() => userDetail.phoneNumber = value?.trim());
             },
             keyboardType: TextInputType.phone,
           ),
@@ -91,7 +97,7 @@ class ProfileState extends State<ProfileForm> {
             label: "Postal code",
             value: userDetail.postalCode,
             updateFunction: (value) {
-              setState(() => userDetail.postalCode = value);
+              setState(() => userDetail.postalCode = value?.trim());
             },
             keyboardType: TextInputType.phone,
           ),
@@ -129,13 +135,15 @@ class _InputForm extends StatelessWidget {
   final TextInputType? keyboardType;
   final void Function(String?) updateFunction;
   final String? value;
+  final String? Function(String value)? validation;
 
   const _InputForm(
       {required this.label,
       required this.value,
       required this.updateFunction,
       Key? key,
-      this.keyboardType})
+      this.keyboardType,
+      this.validation})
       : super(key: key);
 
   @override
@@ -147,7 +155,7 @@ class _InputForm extends StatelessWidget {
           if (value == null || value.trim().isEmpty) {
             return 'Please fill this entry';
           }
-          return null;
+          return validation != null ? validation!(value) : null;
         },
         onChanged: (String? value) {
           updateFunction(value);
