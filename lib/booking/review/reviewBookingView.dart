@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:proxyfoxyapp/booking/bookingDto.dart';
+import 'package:proxyfoxyapp/booking/service/bookingService.dart';
 import 'package:proxyfoxyapp/booking/review/reviewBookingInfo.dart';
 
 import '../../profile/profile.dart';
 import '../../profile/profileService.dart';
-import 'package:http/http.dart' as http;
 
 class ReviewBooking extends StatelessWidget {
   final String gymName;
@@ -23,7 +21,7 @@ class ReviewBooking extends StatelessWidget {
       ),
       body: ListView(
         children: [
-          BookingInfoView(
+          BookingReviewInfoView(
               gymName: gymName,
               from: slot.start.toLocal(),
               to: slot.end.toLocal()),
@@ -90,14 +88,13 @@ class BookingOrProfileButtonState extends State<BookingOrProfileButton> {
   }
 }
 
-class BookingButton extends StatelessWidget {
-  final String endpoint =
-      "http://641a-5-145-176-14.ngrok.io/book/withUser"; //"https://b-proxy-foxy.herokuapp.com/book";
+class BookingButton extends StatefulWidget {
+  final bookingService = BookingService.instance;
   final UserProfile userProfile;
   final SlotInfoDTO slot;
   final String gymName;
 
-  const BookingButton(
+  BookingButton(
       {Key? key,
       required this.userProfile,
       required this.slot,
@@ -105,56 +102,65 @@ class BookingButton extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<StatefulWidget> createState() => BookingButtonState();
+}
+
+class BookingButtonState extends State<BookingButton> {
+  late bool isActive;
+
+  @override
+  void initState() {
+    super.initState();
+    isActive = true;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () async {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: const Color.fromARGB(200, 255, 183, 0),
-              duration: const Duration(minutes: 1),
-              content: Row(
-                children: const <Widget>[
-                  CircularProgressIndicator(),
-                  Text("  Booking...")
-                ],
-              )));
-          http
-              .post(Uri.parse(endpoint),
-                  headers: <String, String>{
-                    'Content-Type': 'application/json; charset=UTF-8',
-                  },
-                  body: jsonEncode({
-                    'id': slot.id,
-                    'user': userProfile.toMap(),
-                    'place': gymName,
-                    'start': slot.start.toIso8601String(),
-                    'end': slot.end.toIso8601String()
-                  }),
-                  encoding: Encoding.getByName("utf-8"))
-              .then((value) {
-            ScaffoldMessenger.of(context).removeCurrentSnackBar();
-            if (value.statusCode == 200) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                backgroundColor: Color.fromARGB(200, 0, 255, 13),
-                content: Text("Booking completed!!!"),
-              ));
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                backgroundColor: Color.fromARGB(200, 255, 0, 0),
-                content: Text("Something went wrong :/"),
-              ));
-            }
-          }).timeout(const Duration(seconds: 10), onTimeout: () {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              backgroundColor: Color.fromARGB(200, 255, 0, 0),
-              content: Text("No aswer from the server :("),
-            ));
-          });
-        },
+        onPressed: !isActive
+            ? null
+            : () async {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: const Color.fromARGB(200, 255, 183, 0),
+                    duration: const Duration(seconds: 11),
+                    content: Row(
+                      children: const <Widget>[
+                        CircularProgressIndicator(),
+                        Text("  Booking...")
+                      ],
+                    )));
+                setState(() {
+                  isActive = false;
+                });
+                (await widget
+                        .bookingService) // TODO damn I need to find a wayyy better solution here too
+                    .book(widget.slot, widget.gymName, widget.userProfile)
+                    .then((value) {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  if (value) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      backgroundColor: Color.fromARGB(200, 0, 255, 13),
+                      content: Text("Booking completed!!!"),
+                    ));
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  } else {
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      backgroundColor: Color.fromARGB(200, 255, 0, 0),
+                      content: Text("Something went wrong :/"),
+                    ));
+                    setState(() {
+                      isActive = true;
+                    });
+                  }
+                }).timeout(const Duration(seconds: 10), onTimeout: () {
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    backgroundColor: Color.fromARGB(200, 255, 0, 0),
+                    content: Text("No answer from the server :("),
+                  ));
+                });
+              },
         child: const Text("Book"));
   }
 }
-
-// ScaffoldMessenger.of(context).removeCurrentSnackBar())
-//               .then((value) => Navigator.of(context)
-//               .popUntil((route) => route.isFirst));

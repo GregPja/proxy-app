@@ -73,7 +73,17 @@ class _HomeCalendarPageState extends State<BookingCalendarView> {
               ),
               startingDayOfWeek: StartingDayOfWeek.monday,
               onDaySelected: (DateTime date, events, somethingElse) {
-                _displayPlacesForDate(date);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    backgroundColor: const Color.fromARGB(200, 255, 183, 0),
+                    duration: const Duration(minutes: 1),
+                    content: Row(
+                      children: const <Widget>[
+                        CircularProgressIndicator(),
+                        Text("  Fetching slots...")
+                      ],
+                    )));
+                _displayPlacesForDate(date).then((value) =>
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar());
               },
               builders: CalendarBuilders(
                 selectedDayBuilder: (context, date, events) => Container(
