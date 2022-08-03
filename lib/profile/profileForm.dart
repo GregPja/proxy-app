@@ -11,9 +11,9 @@ class ProfileForm extends StatefulWidget {
 }
 
 class ProfileState extends State<ProfileForm> {
+  UserDetail userDetail = UserDetail();
   final _profileService = ProfileService();
   final _formKey = GlobalKey<FormState>();
-  UserDetail userDetail = UserDetail();
 
   @override
   void initState() {
