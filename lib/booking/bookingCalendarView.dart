@@ -5,6 +5,7 @@ import 'package:proxyfoxyapp/booking/bookingDto.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:http/http.dart' as http;
 
+import '../animation/animation.dart';
 import 'boulderingPlaces.dart';
 
 class BookingCalendarView extends StatefulWidget {
@@ -78,7 +79,7 @@ class _HomeCalendarPageState extends State<BookingCalendarView> {
                     duration: const Duration(minutes: 1),
                     content: Row(
                       children: const <Widget>[
-                        CircularProgressIndicator(),
+                        AnimatedClimber(),
                         Text("  Fetching slots...")
                       ],
                     )));

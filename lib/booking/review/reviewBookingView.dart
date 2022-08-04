@@ -3,6 +3,7 @@ import 'package:proxyfoxyapp/booking/bookingDto.dart';
 import 'package:proxyfoxyapp/booking/service/bookingService.dart';
 import 'package:proxyfoxyapp/booking/review/reviewBookingInfo.dart';
 
+import '../../animation/animation.dart';
 import '../../profile/profile.dart';
 import '../../profile/profileService.dart';
 
@@ -122,10 +123,10 @@ class BookingButtonState extends State<BookingButton> {
             : () async {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     backgroundColor: const Color.fromARGB(200, 255, 183, 0),
-                    duration: const Duration(seconds: 11),
+                    duration: const Duration(minutes: 2),
                     content: Row(
                       children: const <Widget>[
-                        CircularProgressIndicator(),
+                        AnimatedClimber(),
                         Text("  Booking...")
                       ],
                     )));

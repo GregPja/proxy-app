@@ -6,12 +6,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:proxyfoxyapp/booking/bookingDto.dart';
 import 'package:proxyfoxyapp/booking/service/booking_observer.dart';
 import 'package:proxyfoxyapp/profile/profileService.dart';
-import 'package:collection/collection.dart'; //
 
 class BookingService {
   static BookingService? _instance;
   final String endpoint =
-      "http://8f94-2-205-74-220.ngrok.io/book/withUser"; //"https://b-proxy-foxy.herokuapp.com/book";
+      "https://b-proxy-foxy.herokuapp.com/book/withUser";
   final List<Booking> _latestBookings;
   final List<IBookingObserver> _observers = List.empty(growable: true);
 
@@ -35,7 +34,7 @@ class BookingService {
 
   static Future<File> get _bookingFile async {
     final path = (await (getApplicationDocumentsDirectory())).path;
-    return File('$path/bookings1.json');
+    return File('$path/bookings.json');
   }
 
   Future<bool> book(
